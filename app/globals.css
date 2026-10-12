@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-cream font-sans text-ink-900 antialiased;
+  }
+  /* Urdu reads better in Nastaliq with extra line height */
+  [dir="rtl"] body {
+    @apply font-urdu;
+    line-height: 2;
+  }
+  [dir="rtl"] h1,
+  [dir="rtl"] h2,
+  [dir="rtl"] h3 {
+    @apply font-urdu;
+    line-height: 1.7;
+    letter-spacing: 0;
+  }
+  ::selection {
+    background: #f0be5b;
+    color: #0a1630;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+  .eyebrow {
+    @apply inline-block rounded-full bg-gold-400/20 px-3.5 py-1 text-xs font-semibold uppercase tracking-widest text-gold-600;
+  }
+  [dir="rtl"] .eyebrow {
+    @apply tracking-normal;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2;
+  }
+  .btn-gold {
+    @apply bg-gold-400 text-ink-900 shadow-glow hover:-translate-y-0.5 hover:bg-gold-300;
+  }
+  .btn-ghost {
+    @apply border border-white/25 text-white hover:bg-white/10;
+  }
+  .btn-dark {
+    @apply bg-ink-900 text-white hover:-translate-y-0.5 hover:bg-ink-700;
+  }
+  .section {
+    @apply py-20 sm:py-28;
+  }
+}
