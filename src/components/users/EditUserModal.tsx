@@ -35,9 +35,9 @@ const EditUserModal = ({ user, onClose, onSuccess }: EditUserModalProps) => {
     defaultValues: {
       username: user.username,
       email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phone: user.phone,
+      firstName: user.firstName ?? undefined,
+      lastName: user.lastName ?? undefined,
+      phone: user.phone ?? undefined,
       role: user.roles[0] as 'ADMIN' | 'TEACHER' | 'STUDENT',
     },
   })

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, Clock } from 'lucide-react'
+import { X } from 'lucide-react'
 import { enquiryService } from '@/services/enquiryService'
 import { toast } from 'react-toastify'
 import type { Enquiry } from '@/types'
@@ -16,7 +16,7 @@ const EnquiryDetailModal = ({
   onStatusUpdate,
 }: EnquiryDetailModalProps) => {
   const [loading, setLoading] = useState(false)
-  const [newStatus, setNewStatus] = useState(enquiry.status)
+  const [newStatus, setNewStatus] = useState<string>(enquiry.status)
   const [reason, setReason] = useState('')
   const [notes, setNotes] = useState('')
 
@@ -87,7 +87,7 @@ const EnquiryDetailModal = ({
             <div>
               <p className="text-gray-600 text-sm">Class</p>
               <p className="text-gray-900 font-medium mt-1">
-                {enquiry.classEntity.name} - {enquiry.classEntity.section}
+                {enquiry.className}
               </p>
             </div>
             <div>
@@ -131,28 +131,8 @@ const EnquiryDetailModal = ({
                   {enquiry.status}
                 </span>
               </div>
-              {enquiry.assignedTo && (
-                <div className="text-right">
-                  <p className="text-gray-600 text-sm">Assigned To</p>
-                  <p className="text-gray-900 font-medium mt-1">
-                    {enquiry.assignedTo.username}
-                  </p>
-                </div>
-              )}
             </div>
           </div>
-
-          {/* Response Time */}
-          {enquiry.firstResponseTime && (
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200 flex items-center space-x-3">
-              <Clock className="w-5 h-5 text-green-600" />
-              <div>
-                <p className="text-green-900 font-medium">
-                  Responded on {new Date(enquiry.firstResponseTime).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-          )}
 
           {/* Status Update */}
           <div className="border-t pt-6">

@@ -42,13 +42,13 @@ const EditTeacherModal = ({
   } = useForm<EditTeacherFormData>({
     resolver: zodResolver(editTeacherSchema),
     defaultValues: {
-      bio: teacher.bio,
-      qualifications: teacher.qualifications,
-      experienceYears: teacher.experienceYears,
-      phone: teacher.phone,
+      bio: teacher.bio ?? undefined,
+      qualifications: teacher.qualifications ?? undefined,
+      experienceYears: teacher.experienceYears ?? undefined,
+      phone: teacher.phone ?? undefined,
       subjectExpertise: teacher.subjectExpertise.map((exp) => ({
         subjectId: exp.subjectId.toString(),
-        proficiencyLevel: exp.proficiencyLevel,
+        proficiencyLevel: exp.proficiencyLevel as EditTeacherFormData['subjectExpertise'][number]['proficiencyLevel'],
       })),
     },
   })

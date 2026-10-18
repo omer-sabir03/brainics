@@ -7,16 +7,16 @@ export const userService = {
     return response.data
   },
 
-  async updateUser(id: string, data: any): Promise<User> {
+  async updateUser(id: number, data: any): Promise<User> {
     const response = await api.put(`/users/${id}`, data)
     return response.data
   },
 
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: number): Promise<void> {
     await api.delete(`/users/${id}`)
   },
 
-  async getUserById(id: string): Promise<User> {
+  async getUserById(id: number): Promise<User> {
     const response = await api.get(`/users/${id}`)
     return response.data
   },
@@ -36,12 +36,12 @@ export const userService = {
     return response.data
   },
 
-  async enableUser(id: string): Promise<User> {
+  async enableUser(id: number): Promise<User> {
     const response = await api.put(`/users/${id}/enable`)
     return response.data
   },
 
-  async disableUser(id: string): Promise<User> {
+  async disableUser(id: number): Promise<User> {
     const response = await api.put(`/users/${id}/disable`)
     return response.data
   }

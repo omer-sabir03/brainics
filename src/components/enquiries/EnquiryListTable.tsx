@@ -52,7 +52,7 @@ const EnquiryListTable = ({
             <th>Parent</th>
             <th>Class</th>
             <th>Status</th>
-            <th>Assigned To</th>
+            <th>Source</th>
             <th>Created</th>
             <th>Action</th>
           </tr>
@@ -66,7 +66,7 @@ const EnquiryListTable = ({
                 </span>
               </td>
               <td className="text-gray-600">{enquiry.parentName}</td>
-              <td className="text-gray-600">{enquiry.classEntity.name}</td>
+              <td className="text-gray-600">{enquiry.className}</td>
               <td>
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -77,7 +77,7 @@ const EnquiryListTable = ({
                 </span>
               </td>
               <td className="text-gray-600">
-                {enquiry.assignedTo?.username || '-'}
+                {enquiry.source}
               </td>
               <td className="text-sm text-gray-600">
                 {new Date(enquiry.createdAt).toLocaleDateString()}

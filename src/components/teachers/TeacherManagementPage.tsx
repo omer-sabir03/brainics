@@ -74,7 +74,7 @@ const TeacherManagementPage = () => {
     (teacher) =>
       teacher.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       teacher.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      teacher.bio.toLowerCase().includes(searchTerm.toLowerCase())
+      (teacher.bio ?? '').toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   return (
