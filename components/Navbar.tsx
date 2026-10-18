@@ -59,6 +59,9 @@ export default function Navbar() {
           >
             {lang === "en" ? "اردو" : "English"}
           </button>
+          <a href="/admin/login" className="hidden text-sm font-medium text-white/80 transition hover:text-gold-400 sm:inline-flex">
+            Login
+          </a>
           <a href="#contact" className="btn btn-gold hidden !px-5 !py-2.5 sm:inline-flex">
             {t.nav.enquire}
           </a>
@@ -87,6 +90,15 @@ export default function Navbar() {
                 </a>
               </li>
             ))}
+            <li>
+              <a
+                href="/admin/login"
+                onClick={() => setOpen(false)}
+                className="block border-b border-white/5 py-3.5 text-base font-medium text-white/90"
+              >
+                Login
+              </a>
+            </li>
             <li className="py-4">
               <a href="#contact" onClick={() => setOpen(false)} className="btn btn-gold w-full">
                 {t.nav.enquire}

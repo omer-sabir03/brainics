@@ -1,10 +1,23 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
+  // Dark mode follows the `dark` class that ThemeContext sets on <html>
+  darkMode: "class",
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
+        // Admin dashboard palette, matched to the navy brand
+        primary: {
+          50: "#EEF2FB",
+          100: "#DDE5F7",
+          200: "#BCCBEE",
+          400: "#5E7FD0",
+          600: "#22397A",
+          700: "#16295A",
+          800: "#0F1F44",
+          900: "#0A1630",
+        },
         ink: {
           950: "#070F22",
           900: "#0A1630",
