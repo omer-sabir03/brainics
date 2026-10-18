@@ -6,10 +6,12 @@ import Results from "@/components/Results";
 import Gallery from "@/components/Gallery";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import KeepAlive from "@/components/KeepAlive";
 
 export default function Home() {
   return (
     <>
+      <KeepAlive />
       <Navbar />
       <main>
         <Hero />
