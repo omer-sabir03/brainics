@@ -6,7 +6,7 @@ interface AuthContextType {
   user: CurrentUser | null
   token: string | null
   isLoading: boolean
-  login: (username: string, password: string) => Promise<void>
+  login: (username: string, password: string) => Promise<CurrentUser>
   logout: () => void
   hasRole: (role: string) => boolean
 }
@@ -47,6 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('token', response.accessToken)
     setToken(response.accessToken)
     setUser(response.user)
+    return response.user
   }, [])
 
   const hasRole = useCallback(

@@ -77,6 +77,14 @@ export interface CreateTeacherRequest {
   subjectExpertise: { subjectId: number; proficiencyLevel: string }[]
 }
 
+// Matches the backend's TeacherSelfUpdateRequest (teacher portal; subjects stay admin-managed)
+export interface TeacherSelfUpdateRequest {
+  bio?: string
+  qualifications?: string
+  experienceYears?: number
+  phone?: string
+}
+
 // Matches the backend's EnquiryResponse
 export interface EnquirySubjectPreference {
   subjectId: number

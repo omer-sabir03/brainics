@@ -1,8 +1,14 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { homePathFor } from '@/utils/roles'
 
-const ProtectedRoute = () => {
-  const { token, isLoading } = useAuth()
+interface ProtectedRouteProps {
+  // Roles allowed to see the route; anyone signed in if omitted
+  allowedRoles?: string[]
+}
+
+const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
+  const { token, user, isLoading } = useAuth()
 
   if (isLoading) {
     return (
@@ -15,8 +21,12 @@ const ProtectedRoute = () => {
     )
   }
 
-  if (!token) {
+  if (!token || !user) {
     return <Navigate to="/login" replace />
+  }
+
+  if (allowedRoles && !user.roles.some((role) => allowedRoles.includes(role))) {
+    return <Navigate to={homePathFor(user.roles)} replace />
   }
 
   return <Outlet />

@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css'
 
 // Components
 import LoginPage from './components/auth/LoginPage'
+import RegisterPage from './components/auth/RegisterPage'
+import VerifyEmailPage from './components/auth/VerifyEmailPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import Layout from './components/common/Layout'
 import EnhancedDashboardPage from './components/dashboard/EnhancedDashboardPage'
@@ -13,6 +15,8 @@ import UserManagementPage from './components/users/UserManagementPage'
 import TeacherManagementPage from './components/teachers/TeacherManagementPage'
 import EnquiryManagementPage from './components/enquiries/EnquiryManagementPage'
 import AuditLogsPage from './components/audit/AuditLogsPage'
+import TeacherPortalPage from './components/portal/TeacherPortalPage'
+import StudentPortalPage from './components/portal/StudentPortalPage'
 
 function App() {
   return (
@@ -21,11 +25,13 @@ function App() {
       <Router basename="/admin">
         <AuthProvider>
         <Routes>
-          {/* Login route */}
+          {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
 
-          {/* Protected routes with layout */}
-          <Route element={<ProtectedRoute />}>
+          {/* Admin dashboard */}
+          <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
             <Route
               element={
                 <Layout>
@@ -66,6 +72,16 @@ function App() {
               }
               path="/audit-logs"
             />
+          </Route>
+
+          {/* Teacher portal */}
+          <Route element={<ProtectedRoute allowedRoles={['TEACHER']} />}>
+            <Route element={<TeacherPortalPage />} path="/teacher" />
+          </Route>
+
+          {/* Student portal */}
+          <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
+            <Route element={<StudentPortalPage />} path="/student" />
           </Route>
 
           {/* 404 */}

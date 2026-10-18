@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'react-toastify'
 import { Mail, Lock, AlertCircle } from 'lucide-react'
+import { homePathFor } from '@/utils/roles'
 
 const loginSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -29,9 +30,9 @@ export const LoginPage = () => {
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true)
     try {
-      await login(data.username, data.password)
+      const user = await login(data.username, data.password)
       toast.success('Login successful!')
-      navigate('/')
+      navigate(homePathFor(user.roles))
     } catch (error) {
       toast.error('Invalid credentials. Please try again.')
     } finally {
@@ -116,12 +117,13 @@ export const LoginPage = () => {
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm font-medium text-blue-900 mb-2">Demo Credentials:</p>
-            <p className="text-sm text-blue-800">Username: <code className="bg-white px-2 py-1 rounded">admin</code></p>
-            <p className="text-sm text-blue-800">Password: <code className="bg-white px-2 py-1 rounded">password123</code></p>
-          </div>
+          {/* Students create their own account */}
+          <p className="mt-6 text-center text-sm text-gray-600">
+            New student?{' '}
+            <a href="/admin/register" className="font-semibold text-primary-600 hover:underline">
+              Create an account
+            </a>
+          </p>
         </div>
 
         {/* Footer */}
