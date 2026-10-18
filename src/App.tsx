@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -11,11 +12,13 @@ import EnhancedDashboardPage from './components/dashboard/EnhancedDashboardPage'
 import UserManagementPage from './components/users/UserManagementPage'
 import TeacherManagementPage from './components/teachers/TeacherManagementPage'
 import EnquiryManagementPage from './components/enquiries/EnquiryManagementPage'
+import AuditLogsPage from './components/audit/AuditLogsPage'
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
         <Routes>
           {/* Login route */}
           <Route path="/login" element={<LoginPage />} />
@@ -57,10 +60,7 @@ function App() {
             <Route
               element={
                 <Layout>
-                  <div className="text-center py-12">
-                    <h1 className="text-3xl font-bold text-gray-900">Audit Logs</h1>
-                    <p className="text-gray-600 mt-2">Coming Soon in Sprint 5</p>
-                  </div>
+                  <AuditLogsPage />
                 </Layout>
               }
               path="/audit-logs"
@@ -71,9 +71,10 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
 
-        <ToastContainer position="bottom-right" autoClose={4000} />
-      </AuthProvider>
-    </Router>
+          <ToastContainer position="bottom-right" autoClose={4000} />
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   )
 }
 
