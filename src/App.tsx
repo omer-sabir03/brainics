@@ -9,6 +9,8 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import Layout from './components/common/Layout'
 import EnhancedDashboardPage from './components/dashboard/EnhancedDashboardPage'
 import UserManagementPage from './components/users/UserManagementPage'
+import TeacherManagementPage from './components/teachers/TeacherManagementPage'
+import EnquiryManagementPage from './components/enquiries/EnquiryManagementPage'
 
 function App() {
   return (
@@ -39,10 +41,7 @@ function App() {
             <Route
               element={
                 <Layout>
-                  <div className="text-center py-12">
-                    <h1 className="text-3xl font-bold text-gray-900">Teacher Management</h1>
-                    <p className="text-gray-600 mt-2">Coming Soon in Sprint 4</p>
-                  </div>
+                  <TeacherManagementPage />
                 </Layout>
               }
               path="/teachers"
@@ -50,10 +49,7 @@ function App() {
             <Route
               element={
                 <Layout>
-                  <div className="text-center py-12">
-                    <h1 className="text-3xl font-bold text-gray-900">Enquiry Management</h1>
-                    <p className="text-gray-600 mt-2">Coming Soon in Sprint 4</p>
-                  </div>
+                  <EnquiryManagementPage />
                 </Layout>
               }
               path="/enquiries"
