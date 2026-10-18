@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import LoginPage from './components/auth/LoginPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import Layout from './components/common/Layout'
-import DashboardPage from './components/dashboard/DashboardPage'
+import EnhancedDashboardPage from './components/dashboard/EnhancedDashboardPage'
 import UserManagementPage from './components/users/UserManagementPage'
 
 function App() {
@@ -23,7 +23,7 @@ function App() {
             <Route
               element={
                 <Layout>
-                  <DashboardPage />
+                  <EnhancedDashboardPage />
                 </Layout>
               }
               path="/"
