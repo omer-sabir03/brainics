@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios'
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api'
+// NEXT_PUBLIC_ variables are inlined into the browser bundle at build time
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'
 
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
