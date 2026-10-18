@@ -1,83 +1,52 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import { authService } from '@/services/authService'
-import type { User, AuthResponse } from '@/types'
+import type { CurrentUser } from '@/types'
 
 interface AuthContextType {
-  user: User | null
+  user: CurrentUser | null
   token: string | null
   isLoading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (username: string, password: string) => Promise<void>
   logout: () => void
-  validateToken: () => Promise<boolean>
   hasRole: (role: string) => boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<CurrentUser | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const savedToken = localStorage.getItem('token')
-    if (savedToken) {
-      setToken(savedToken)
-      validateToken(savedToken)
-    } else {
-      setIsLoading(false)
-    }
-  }, [])
-
-  const validateToken = useCallback(
-    async (authToken?: string) => {
-      try {
-        const tokenToValidate = authToken || token
-        if (!tokenToValidate) {
-          setIsLoading(false)
-          return false
-        }
-
-        const isValid = await authService.validateToken(tokenToValidate)
-        if (isValid) {
-          const userData = authService.parseJwt(tokenToValidate)
-          setUser(userData)
-          setToken(tokenToValidate)
-          setIsLoading(false)
-          return true
-        } else {
-          logout()
-          return false
-        }
-      } catch (error) {
-        console.error('Token validation error:', error)
-        logout()
-        return false
-      }
-    },
-    [token]
-  )
-
-  const login = useCallback(async (email: string, password: string) => {
-    try {
-      const response: AuthResponse = await authService.login(email, password)
-      setToken(response.token)
-      setUser(response.user)
-      localStorage.setItem('token', response.token)
-      if (response.refreshToken) {
-        localStorage.setItem('refreshToken', response.refreshToken)
-      }
-    } catch (error) {
-      throw error
-    }
-  }, [])
 
   const logout = useCallback(() => {
     authService.logout()
     setUser(null)
     setToken(null)
-    localStorage.removeItem('token')
-    localStorage.removeItem('refreshToken')
+  }, [])
+
+  // Restore the session from a saved token on page load
+  useEffect(() => {
+    const savedToken = localStorage.getItem('token')
+    if (!savedToken) {
+      setIsLoading(false)
+      return
+    }
+
+    authService
+      .me(savedToken)
+      .then((currentUser) => {
+        setToken(savedToken)
+        setUser(currentUser)
+      })
+      .catch(() => logout())
+      .finally(() => setIsLoading(false))
+  }, [logout])
+
+  const login = useCallback(async (username: string, password: string) => {
+    const response = await authService.login(username, password)
+    localStorage.setItem('token', response.accessToken)
+    setToken(response.accessToken)
+    setUser(response.user)
   }, [])
 
   const hasRole = useCallback(
@@ -95,7 +64,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         login,
         logout,
-        validateToken: () => validateToken(),
         hasRole
       }}
     >

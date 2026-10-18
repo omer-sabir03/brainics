@@ -11,10 +11,21 @@ export interface User {
   updatedAt: string
 }
 
+// Matches the backend's UserResponse (GET /api/auth/me and the login response)
+export interface CurrentUser {
+  id: number
+  username: string
+  roles: string[]
+  enabled: boolean
+  createdAt: string
+}
+
+// Matches the backend's AuthResponse (POST /api/auth/login)
 export interface AuthResponse {
-  token: string
-  refreshToken: string
-  user: User
+  accessToken: string
+  tokenType: string
+  expiresIn: number
+  user: CurrentUser
 }
 
 export interface Teacher {

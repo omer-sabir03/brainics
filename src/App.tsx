@@ -17,7 +17,8 @@ import AuditLogsPage from './components/audit/AuditLogsPage'
 function App() {
   return (
     <ThemeProvider>
-      <Router>
+      {/* The app is mounted under /admin by the Next.js catch-all route */}
+      <Router basename="/admin">
         <AuthProvider>
         <Routes>
           {/* Login route */}

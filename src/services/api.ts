@@ -23,9 +23,10 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    // A wrong password also returns 401, so only expire the session for other requests
+    const isLoginRequest = error.config?.url?.includes('/auth/login')
+    if (error.response?.status === 401 && !isLoginRequest) {
       localStorage.removeItem('token')
-      localStorage.removeItem('refreshToken')
       window.location.href = '/admin'
     }
     return Promise.reject(error)
