@@ -8,10 +8,17 @@ export interface StudentRegistrationData {
 }
 
 export const authService = {
-  async login(username: string, password: string): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/login', { username, password })
-    return response.data
-  },
+  
+async login(username: string, password: string): Promise<AuthResponse> {
+  const response = await api.post<{
+    success: boolean
+    message: string
+    data: AuthResponse
+    timestamp: string
+  }>('/auth/login', { username, password })
+
+  return response.data.data
+},
 
   // Returns the signed-in user for a valid token; rejects (401) otherwise
   async me(token?: string): Promise<CurrentUser> {
