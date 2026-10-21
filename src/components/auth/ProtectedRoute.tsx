@@ -25,9 +25,15 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
     return <Navigate to="/login" replace />
   }
 
-  if (allowedRoles && !user.roles.some((role) => allowedRoles.includes(role))) {
-    return <Navigate to={homePathFor(user.roles)} replace />
-  }
+  // if (allowedRoles && !user.roles.some((role) => allowedRoles.includes(role))) {
+  //   return <Navigate to={homePathFor(user.roles)} replace />
+  // }
+
+const userRoles = Array.isArray(user.roles) ? user.roles : [];
+
+if (allowedRoles && !userRoles.some((role) => allowedRoles.includes(role))) {
+  return <Navigate to={homePathFor(userRoles)} replace />;
+}
 
   return <Outlet />
 }
