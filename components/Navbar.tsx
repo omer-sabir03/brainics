@@ -62,9 +62,6 @@ export default function Navbar() {
           <a href="/admin/login" className="hidden text-sm font-medium text-white/80 transition hover:text-gold-400 sm:inline-flex">
             Login
           </a>
-          <a href="#contact" className="btn btn-gold hidden !px-5 !py-2.5 sm:inline-flex">
-            {t.nav.enquire}
-          </a>
           <button
             className="grid h-10 w-10 place-items-center rounded-full text-white lg:hidden"
             onClick={() => setOpen((o) => !o)}
@@ -97,11 +94,6 @@ export default function Navbar() {
                 className="block border-b border-white/5 py-3.5 text-base font-medium text-white/90"
               >
                 Login
-              </a>
-            </li>
-            <li className="py-4">
-              <a href="#contact" onClick={() => setOpen(false)} className="btn btn-gold w-full">
-                {t.nav.enquire}
               </a>
             </li>
           </ul>

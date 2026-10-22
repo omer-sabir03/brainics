@@ -1,37 +1,15 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
 import { useLang } from "./LanguageProvider";
-import { ClockIcon, PhoneIcon, PinIcon, WhatsAppIcon } from "./Icons";
+import { ClockIcon, MailIcon, PhoneIcon, PinIcon, WhatsAppIcon } from "./Icons";
+import AdmissionForm from "./AdmissionForm";
 import { site } from "@/lib/site";
 
 export default function Contact() {
   const { t, lang } = useLang();
   const f = t.contact.form;
-  const [form, setForm] = useState({ name: "", phone: "", cls: "", message: "" });
-
-  const update = (k: keyof typeof form) => (e: { target: { value: string } }) =>
-    setForm((s) => ({ ...s, [k]: e.target.value }));
 
   const waDirect = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(f.msgIntro)}`;
-
-  // Static site → no server. The form opens WhatsApp with the details pre-filled.
-  // (Later we can replace this with a Spring Boot endpoint.)
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const lines = [
-      f.msgIntro,
-      "",
-      `${f.lblName}: ${form.name}`,
-      `${f.lblPhone}: ${form.phone}`,
-      `${f.lblClass}: ${form.cls}`,
-      form.message ? `${f.lblMsg}: ${form.message}` : "",
-    ].filter((l, i, a) => l !== "" || (i > 0 && a[i - 1] !== ""));
-    window.open(`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener");
-  };
-
-  const input =
-    "mt-1.5 w-full rounded-xl border border-ink-900/10 bg-white px-4 py-3 text-sm outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40";
 
   const address = lang === "ur" ? site.addressUr : site.addressEn;
 
@@ -53,6 +31,9 @@ export default function Contact() {
               </a>
               <a href={`tel:${site.phoneTel}`} className="btn btn-ghost">
                 <PhoneIcon /> {t.contact.call}
+              </a>
+              <a href={`mailto:${site.email}`} className="btn btn-ghost">
+                <MailIcon /> {t.contact.email}
               </a>
             </div>
 
@@ -96,47 +77,8 @@ export default function Contact() {
             )}
           </div>
 
-          {/* Form */}
-          <form onSubmit={onSubmit} className="rounded-3xl border border-ink-900/5 bg-cream p-8 shadow-card">
-            <div className="grid gap-5 sm:grid-cols-2">
-              <label className="block text-sm font-semibold">
-                {f.name}
-                <input required value={form.name} onChange={update("name")} className={input} autoComplete="name" />
-              </label>
-              <label className="block text-sm font-semibold">
-                {f.phone}
-                <input
-                  required
-                  type="tel"
-                  inputMode="tel"
-                  value={form.phone}
-                  onChange={update("phone")}
-                  className={input}
-                  autoComplete="tel"
-                  dir="ltr"
-                />
-              </label>
-            </div>
-            <label className="mt-5 block text-sm font-semibold">
-              {f.cls}
-              <select required value={form.cls} onChange={update("cls")} className={input}>
-                <option value="">{f.classPlaceholder}</option>
-                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                  <option key={n} value={String(n)}>
-                    {lang === "ur" ? `جماعت ${n}` : `Class ${n}`}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="mt-5 block text-sm font-semibold">
-              {f.message}
-              <textarea rows={4} value={form.message} onChange={update("message")} className={input} />
-            </label>
-            <button type="submit" className="btn btn-dark mt-6 w-full">
-              <WhatsAppIcon /> {f.submit}
-            </button>
-            <p className="mt-3 text-center text-xs text-ink-700/60">{f.hint}</p>
-          </form>
+          {/* Admission form, submitted to the backend */}
+          <AdmissionForm />
         </div>
       </div>
     </section>

@@ -173,7 +173,7 @@ const CreateTeacherModal = ({ onClose, onSuccess }: CreateTeacherModalProps) => 
             <input
               {...register('phone')}
               type="tel"
-              placeholder="+923001234567"
+              placeholder="+919876543210"
               className="input"
               disabled={loading}
             />

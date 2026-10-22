@@ -8,7 +8,7 @@ export const site = {
   phoneTel: "+910000000000", // TODO: same number, digits only with country code
   // WhatsApp number: country code + number, no "+", spaces or dashes
   whatsapp: "910000000000", // TODO: real WhatsApp number
-  email: "hello@brainics.example", // TODO: real email
+  email: "brainics@outlook.com",
   // Shown in the Contact section
   addressEn: "Your street / locality, Jammu & Kashmir", // TODO: full address
   addressUr: "آپ کا پتہ / علاقہ، جموں و کشمیر", // TODO: full address in Urdu
