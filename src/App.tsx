@@ -17,6 +17,7 @@ import EnquiryManagementPage from './components/enquiries/EnquiryManagementPage'
 import AuditLogsPage from './components/audit/AuditLogsPage'
 import TeacherPortalPage from './components/portal/TeacherPortalPage'
 import StudentPortalPage from './components/portal/StudentPortalPage'
+import TeacherLoginPage from './components/auth/TeacherLoginPage'
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/teacher-login" element={<TeacherLoginPage />} />
 
           {/* Admin dashboard */}
           <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
