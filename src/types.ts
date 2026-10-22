@@ -98,6 +98,10 @@ export interface Enquiry {
   parentEmail: string
   parentPhone: string
   studentName: string
+  studentDateOfBirth?: string | null
+  gender?: string | null
+  currentSchool?: string | null
+  address?: string | null
   classId: number
   className: string
   preferredSubjects: EnquirySubjectPreference[]
