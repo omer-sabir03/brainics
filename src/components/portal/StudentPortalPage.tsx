@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useAuth } from '@/context/AuthContext'
+import { useLang } from '@/components/LanguageProvider'
+import { portalContent } from '@/lib/portalContent'
 import { studentPortalService } from '@/services/portalService'
 import type { Enquiry } from '@/types'
 import PortalLayout from './PortalLayout'
@@ -10,30 +11,30 @@ type EnquiryStatus = Enquiry['status']
 
 // The three stages an enquiry moves through. The backend exposes only the current status to students,
 // so the stepper shows where the enquiry is now, not the dates of earlier stages.
-const stages: { key: EnquiryStatus; label: string }[] = [
-  { key: 'NEW', label: 'Received' },
-  { key: 'CONTACTED', label: 'Contacted' },
-  { key: 'ENROLLED', label: 'Enrolled' },
-]
+const stageKeys: EnquiryStatus[] = ['NEW', 'CONTACTED', 'ENROLLED']
 
-const statusText: Record<EnquiryStatus, string> = {
-  NEW: 'We have received your enquiry and will contact you soon.',
-  CONTACTED: 'We have been in touch with your family.',
-  ENROLLED: 'Your child is enrolled.',
-}
+const stageLabel = (t: (typeof portalContent)['en'], status: EnquiryStatus) =>
+  status === 'NEW' ? t.summaryReceived : status === 'CONTACTED' ? t.summaryContacted : t.summaryEnrolled
 
-const formatDate = (value?: string | null) => (value ? new Date(value).toLocaleDateString() : '—')
+const statusText = (t: (typeof portalContent)['en'], status: EnquiryStatus) =>
+  status === 'NEW' ? t.stageStatusNew : status === 'CONTACTED' ? t.stageStatusContacted : t.stageStatusEnrolled
 
-const genderLabel: Record<string, string> = { MALE: 'Male', FEMALE: 'Female', OTHER: 'Other' }
-
-function StageProgress({ status }: { status: EnquiryStatus }) {
-  const current = stages.findIndex((stage) => stage.key === status)
+function StageProgress({
+  status,
+  label,
+  ariaLabel,
+}: {
+  status: EnquiryStatus
+  label: (s: EnquiryStatus) => string
+  ariaLabel: string
+}) {
+  const current = stageKeys.indexOf(status)
   return (
-    <ol className="flex items-center gap-2" aria-label="Enquiry progress">
-      {stages.map((stage, index) => {
+    <ol className="flex items-center gap-2" aria-label={ariaLabel}>
+      {stageKeys.map((key, index) => {
         const reached = index <= current
         return (
-          <li key={stage.key} className="flex flex-1 items-center gap-2">
+          <li key={key} className="flex min-w-0 flex-1 items-center gap-2">
             <span
               className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-bold ${
                 reached ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300'
@@ -41,10 +42,12 @@ function StageProgress({ status }: { status: EnquiryStatus }) {
             >
               {index + 1}
             </span>
-            <span className={`text-sm ${reached ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-500'}`}>
-              {stage.label}
+            <span
+              className={`truncate text-sm ${reached ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-500'}`}
+            >
+              {label(key)}
             </span>
-            {index < stages.length - 1 && <span className="mx-1 h-px flex-1 bg-gray-200 dark:bg-gray-700" />}
+            {index < stageKeys.length - 1 && <span className="mx-1 h-px flex-1 bg-gray-200 dark:bg-gray-700" />}
           </li>
         )
       })}
@@ -56,25 +59,34 @@ function DetailRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
       <dt className="text-xs uppercase tracking-wide text-gray-500">{label}</dt>
-      <dd className="mt-0.5 text-sm text-gray-900 dark:text-gray-100">{value || '—'}</dd>
+      <dd className="mt-0.5 break-words text-sm text-gray-900 dark:text-gray-100">{value || '—'}</dd>
     </div>
   )
 }
 
 const StudentPortalPage = () => {
   const { user } = useAuth()
+  const { lang } = useLang()
+  const t = portalContent[lang]
+  const locale = lang === 'ur' ? 'ur-PK' : 'en-GB'
+
   const [enquiries, setEnquiries] = useState<Enquiry[]>([])
   const [loading, setLoading] = useState(true)
   const [expandedId, setExpandedId] = useState<number | null>(null)
+
+  const formatDate = useCallback(
+    (value?: string | null) => (value ? new Date(value).toLocaleDateString(locale) : '—'),
+    [locale]
+  )
 
   const loadEnquiries = useCallback(() => {
     setLoading(true)
     studentPortalService
       .getEnquiries()
       .then(setEnquiries)
-      .catch(() => toast.error('Could not load your enquiries'))
+      .catch(() => toast.error(t.loadFailed))
       .finally(() => setLoading(false))
-  }, [])
+  }, [t.loadFailed])
 
   useEffect(() => {
     loadEnquiries()
@@ -89,61 +101,61 @@ const StudentPortalPage = () => {
     [enquiries]
   )
 
+  const genderLabel = (value?: string | null) =>
+    value === 'MALE' ? t.male : value === 'FEMALE' ? t.female : value === 'OTHER' ? t.other : value
+
   return (
-    <PortalLayout title="Student portal">
+    <PortalLayout title={t.studentTitle}>
       {/* Account */}
-      <section className="card grid gap-4 p-6 sm:grid-cols-[1fr_auto] sm:items-center">
-        <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Signed in as</p>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{user?.username}</h2>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Member since {formatDate(user?.createdAt)} · Account {user?.enabled ? 'active' : 'inactive'}
-          </p>
-        </div>
+      <section className="card p-6">
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t.signedInAs}</p>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{user?.username}</h2>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+          {t.memberSince} {formatDate(user?.createdAt)} · {user?.enabled ? t.accountActive : t.accountInactive}
+        </p>
       </section>
 
       {/* Summary */}
-      <section className="grid gap-4 sm:grid-cols-3">
-        {stages.map((stage) => (
-          <div key={stage.key} className="card p-5">
-            <p className="text-sm text-gray-500 dark:text-gray-400">{stage.label}</p>
-            <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{counts[stage.key]}</p>
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {stageKeys.map((key) => (
+          <div key={key} className="card p-5">
+            <p className="text-sm text-gray-500 dark:text-gray-400">{stageLabel(t, key)}</p>
+            <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{counts[key]}</p>
           </div>
         ))}
       </section>
 
       {/* Enquiries */}
       <section className="card overflow-hidden">
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-800">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">My enquiries</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-gray-800">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t.myEnquiries}</h2>
           <button type="button" onClick={loadEnquiries} className="btn-outline" disabled={loading}>
-            {loading ? 'Loading...' : 'Refresh'}
+            {loading ? t.loading : t.refresh}
           </button>
         </div>
 
         {loading && enquiries.length === 0 ? (
-          <p className="p-6 text-gray-500">Loading...</p>
+          <p className="p-6 text-gray-500">{t.loading}</p>
         ) : enquiries.length === 0 ? (
           <div className="p-6 text-gray-600 dark:text-gray-300">
-            <p>
-              No enquiries are linked to your account yet. An enquiry appears here when it is submitted with the same
-              email address as your account.
-            </p>
-            <Link to="/" className="mt-3 inline-block font-semibold text-primary-600 hover:underline">
-              Back to the Brainics website
-            </Link>
+            <p className="font-semibold text-gray-800 dark:text-gray-100">{t.noEnquiriesTitle}</p>
+            <p className="mt-1">{t.noEnquiriesBody}</p>
+            {/* Full page link: the marketing site is outside the /admin app */}
+            <a href="/" className="mt-3 inline-block font-semibold text-primary-600 hover:underline">
+              {t.backToWebsite}
+            </a>
           </div>
         ) : (
           <ul className="divide-y divide-gray-200 dark:divide-gray-800">
             {enquiries.map((enquiry) => {
               const open = expandedId === enquiry.id
               return (
-                <li key={enquiry.id} className="p-6">
+                <li key={enquiry.id} className="p-4 sm:p-6">
                   <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold text-gray-900 dark:text-white">{enquiry.studentName}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {enquiry.className} · Submitted {formatDate(enquiry.createdAt)} · Reference #{enquiry.id}
+                        {enquiry.className} · {t.submitted} {formatDate(enquiry.createdAt)} · {t.reference} #{enquiry.id}
                       </p>
                     </div>
                     <button
@@ -152,39 +164,41 @@ const StudentPortalPage = () => {
                       aria-expanded={open}
                       className="btn-outline"
                     >
-                      {open ? 'Hide details' : 'View details'}
+                      {open ? t.hideDetails : t.viewDetails}
                     </button>
                   </div>
 
                   <div className="mt-4">
-                    <StageProgress status={enquiry.status} />
-                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">{statusText[enquiry.status]}</p>
+                    <StageProgress status={enquiry.status} label={(s) => stageLabel(t, s)} ariaLabel={t.progressLabel} />
+                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">{statusText(t, enquiry.status)}</p>
                   </div>
 
                   {open && (
-                    <div className="mt-5 space-y-5 rounded-xl bg-gray-50 p-5 dark:bg-gray-800/50">
+                    <div className="mt-5 space-y-5 rounded-xl bg-gray-50 p-4 sm:p-5 dark:bg-gray-800/50">
                       <dl className="grid gap-4 sm:grid-cols-2">
-                        <DetailRow label="Parent" value={enquiry.parentName} />
-                        <DetailRow label="Parent phone" value={enquiry.parentPhone} />
-                        <DetailRow label="Parent email" value={enquiry.parentEmail} />
-                        <DetailRow label="Class" value={enquiry.className} />
-                        <DetailRow label="Date of birth" value={formatDate(enquiry.studentDateOfBirth)} />
-                        <DetailRow label="Gender" value={enquiry.gender ? genderLabel[enquiry.gender] ?? enquiry.gender : null} />
-                        <DetailRow label="Current school" value={enquiry.currentSchool} />
-                        <DetailRow label="Address" value={enquiry.address} />
-                        <DetailRow label="Last updated" value={formatDate(enquiry.updatedAt)} />
+                        <DetailRow label={t.parent} value={enquiry.parentName} />
+                        <DetailRow label={t.parentPhone} value={enquiry.parentPhone} />
+                        <DetailRow label={t.parentEmail} value={enquiry.parentEmail} />
+                        <DetailRow label={t.className} value={enquiry.className} />
+                        <DetailRow label={t.dob} value={formatDate(enquiry.studentDateOfBirth)} />
+                        <DetailRow label={t.gender} value={genderLabel(enquiry.gender)} />
+                        <DetailRow label={t.school} value={enquiry.currentSchool} />
+                        <DetailRow label={t.address} value={enquiry.address} />
+                        <DetailRow label={t.lastUpdated} value={formatDate(enquiry.updatedAt)} />
                         <DetailRow
-                          label="Subjects of interest"
+                          label={t.subjects}
                           value={
                             enquiry.preferredSubjects.length > 0
-                              ? enquiry.preferredSubjects.map((s) => s.subjectNameEn).join(', ')
+                              ? enquiry.preferredSubjects
+                                  .map((s) => (lang === 'ur' && s.subjectNameUrdu ? s.subjectNameUrdu : s.subjectNameEn))
+                                  .join(', ')
                               : null
                           }
                         />
                       </dl>
                       {enquiry.message && (
                         <div>
-                          <p className="text-xs uppercase tracking-wide text-gray-500">Your message</p>
+                          <p className="text-xs uppercase tracking-wide text-gray-500">{t.yourMessage}</p>
                           <p className="mt-1 whitespace-pre-line text-sm text-gray-900 dark:text-gray-100">{enquiry.message}</p>
                         </div>
                       )}
