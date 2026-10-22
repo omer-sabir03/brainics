@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useLang } from "./LanguageProvider";
 import { ClockIcon, MailIcon, PhoneIcon, PinIcon, WhatsAppIcon } from "./Icons";
-import AdmissionForm from "./AdmissionForm";
+import EnquiryForm from "./EnquiryForm";
 import { site } from "@/lib/site";
 
 export default function Contact() {
@@ -10,6 +11,16 @@ export default function Contact() {
   const f = t.contact.form;
 
   const waDirect = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(f.msgIntro)}`;
+
+  // mailto: does nothing on computers without a mail app, so also offer the address to copy
+  const [copied, setCopied] = useState(false);
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(site.email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
 
   const address = lang === "ur" ? site.addressUr : site.addressEn;
 
@@ -35,6 +46,9 @@ export default function Contact() {
               <a href={`mailto:${site.email}`} className="btn btn-ghost">
                 <MailIcon /> {t.contact.email}
               </a>
+              <button type="button" onClick={copyEmail} className="btn btn-ghost" aria-label="Copy email address">
+                <span dir="ltr">{site.email}</span> <span className="text-xs text-white/60">{copied ? "Copied" : "Copy"}</span>
+              </button>
             </div>
 
             <ul className="mt-2 space-y-5 text-sm">
@@ -77,8 +91,8 @@ export default function Contact() {
             )}
           </div>
 
-          {/* Admission form, submitted to the backend */}
-          <AdmissionForm />
+          {/* Short enquiry form, submitted to the backend */}
+          <EnquiryForm />
         </div>
       </div>
     </section>
